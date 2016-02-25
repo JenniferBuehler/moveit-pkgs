@@ -1,3 +1,5 @@
+# moveit_controller_multidof
+
 This package provides a MoveIt! plugin to execute joint trajectories.
 See also [this tutorial](https://github.com/JenniferBuehler/jb-ros-packs/wiki/Testing-Jaco-with-MoveIt)
 for an example on how to use it with the Jaco arm.
@@ -30,6 +32,8 @@ controller_list:
      - arm_joint_3
      - ...
 ```
+
+
 Note that
 
 * the type "FollowRobotTrajectory" has to be specified and
@@ -41,3 +45,7 @@ Note that
 * The parameter *action_ns* doesn't have to be specified as it is not used
   at the moment, but it should be declared because otherwise the parameters can't be
   read uniformly with the code of MoveItSimpleControllerManager.
+
+# Under development
+
+The package is in beta.
