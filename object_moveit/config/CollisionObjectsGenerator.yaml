@@ -1,0 +1,41 @@
+# All objects which are to be skipped,
+# as comma or space separated list (e.g. ground plane, known objects...)
+# None of these objects are going to be forwarded to MoveIt! as
+# collision objects, *ever*.
+skip_objects: "ground_plane"
+
+# List of links (either of a robot or other objects) which are
+# *always* allowed to collide with *anything*. When new
+# objects are added to MoveIt!, the collision matrix will
+# be set to allow collisions with the new object and
+# all of the links listed below.
+# Specify as comma or space separated list.
+allowed_collision_links: "table_top"    
+
+# Instead of publishing on the MoveIt! collision object topic,
+# publish a planning scene diff with the new/updated MoveIt!
+# collision objects.
+# This works better if set to true at the moment, because 
+# MoveIt! sometimes misses a message when using the message-publishing
+# (instead of planning-scene-diff) method.
+use_planning_scene_diff: true
+
+# MoveIt! topic of service to obtain planning scene
+moveit_get_planning_scene_topic: "/get_planning_scene"
+
+# MoveIt! topic where planning scenes may be published on
+# for MoveIt (for setting new planning scenes)
+moveit_set_planning_scene_topic: "/planning_scene"
+
+# MoveIt! topic where the collision objects are to be published
+collision_object_topic: "/collision_object"
+
+# Rate at which to publish collision messages
+publish_collision_rate: 10
+
+# Topic on which Object.msg object information is being published
+world_objects_topic: "/gazebo_objects"
+
+# Service name on which object_msgs/ObjectInfo.srv object information
+# can be requested. 
+request_object_service: "/gazebo_objects/get_info"
