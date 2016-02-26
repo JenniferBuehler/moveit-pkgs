@@ -64,6 +64,7 @@
   
   <!-- needed for the tutorial, launch file object_moveit/gazebo_object_recognition.launch -->
   <run_depend>gazebo_test_tools</run_depend>
+  <run_depend>gazebo_state_plugins</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
