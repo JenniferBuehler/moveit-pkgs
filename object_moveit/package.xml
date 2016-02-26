@@ -61,6 +61,9 @@
   <run_depend>shape_tools</run_depend>
   <run_depend>std_msgs</run_depend>
   <run_depend>eigen_conversions</run_depend>
+  
+  <!-- needed for the tutorial, launch file object_moveit/gazebo_object_recognition.launch -->
+  <run_depend>gazebo_test_tools</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
