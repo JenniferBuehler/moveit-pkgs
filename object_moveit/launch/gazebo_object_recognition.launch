@@ -1,0 +1,17 @@
+<launch>
+
+    #####################################
+    # Load Gazebo world plugin and
+    # fake object recognizer
+    #####################################
+    # Load parameters for Gazebo World Plugins to load
+    <include file="$(find gazebo_test_tools)/launch/gazebo_fake_object_recognition.launch"/>
+
+	#####################################
+	# Load MoveIt! collision object generator
+    #####################################
+    <include file="$(find object_moveit)/launch/collision_object_generator.launch">
+        # use the default config file
+        <arg name="config_file" value="$(find object_moveit)/config/CollisionObjectsGenerator.yaml"/>
+    </include>
+</launch>
