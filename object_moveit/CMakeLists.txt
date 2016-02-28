@@ -14,11 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   object_msgs 
   eigen_conversions
+  convenience_ros_functions
 )
-
-## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
-
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -35,9 +32,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES object_moveit
-  CATKIN_DEPENDS geometry_msgs sensor_msgs moveit_msgs roscpp shape_msgs std_msgs eigen_conversions
+  INCLUDE_DIRS include
+  LIBRARIES grasped_object_handler moveit_collision_matrix_manipulator 
+  CATKIN_DEPENDS geometry_msgs sensor_msgs moveit_msgs
+      roscpp shape_msgs std_msgs eigen_conversions convenience_ros_functions
 #  DEPENDS system_lib
 )
 
@@ -52,13 +50,16 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
 )
 
-## Declare a cpp library
 add_library(moveit_collision_matrix_manipulator
     src/MoveItHelpers.cpp
     src/MoveItCollisionMatrixManipulator.cpp
 )
 
-## Declare a cpp executable
+add_library(moveit_grasped_object_handler
+    src/GraspedObjectHandler.cpp
+)
+
+
 add_executable(moveit_collisionobject_generator
     src/ObjectMessageGenerator.cpp
     src/object_message_generator_node.cpp
@@ -69,14 +70,17 @@ add_executable(moveit_collisionobject_generator
 # add_dependencies(object_moveit_node object_moveit_generate_messages_cpp)
 add_dependencies(moveit_collisionobject_generator ${catkin_EXPORTED_TARGETS})
 add_dependencies(moveit_collision_matrix_manipulator ${catkin_EXPORTED_TARGETS})
+add_dependencies(moveit_grasped_object_handler ${catkin_EXPORTED_TARGETS})
 
-## Specify libraries to link a library or executable target against
 target_link_libraries(moveit_collisionobject_generator
     moveit_collision_matrix_manipulator
     ${catkin_LIBRARIES}
 )
 
 target_link_libraries(moveit_collision_matrix_manipulator
+   ${catkin_LIBRARIES}
+)
+target_link_libraries(moveit_grasped_object_handler
    ${catkin_LIBRARIES}
 )
 

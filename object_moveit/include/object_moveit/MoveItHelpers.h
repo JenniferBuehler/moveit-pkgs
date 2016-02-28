@@ -11,22 +11,24 @@
 #include <moveit_msgs/Constraints.h>
 #include <eigen_conversions/eigen_msg.h>
 
-namespace object_moveit {
+namespace object_moveit
+{
 
-class MoveItHelpers {
+class MoveItHelpers
+{
 
-    public:
+public:
     typedef boost::shared_ptr<moveit_msgs::PositionConstraint> PositionConstraintPtr;
     typedef boost::shared_ptr<shape_msgs::SolidPrimitive> SolidPrimitivePtr;
-    
+
     /**
      */
-    MoveItHelpers(){}
+    MoveItHelpers() {}
 
-    ~MoveItHelpers(){}
+    ~MoveItHelpers() {}
 
     /**
-     * Adds goal constraints for the link to be at this pose. 
+     * Adds goal constraints for the link to be at this pose.
      * \param type if 0, only position is considered. If 1, position and
      *      orientation are considered, and if 2 then only orientation is considered.
      */
@@ -34,10 +36,10 @@ class MoveItHelpers {
             const geometry_msgs::PoseStamped &pose, double tolerance_pos, double tolerance_angle, int type);
 
     static moveit_msgs::OrientationConstraint getOrientationConstraint(const std::string& link_name,
-            const geometry_msgs::QuaternionStamped& quat, 
-            const float& x_tolerance, 
+            const geometry_msgs::QuaternionStamped& quat,
+            const float& x_tolerance,
             const float& y_tolerance,
-            const float& z_tolerance); 
+            const float& z_tolerance);
 
     /**
      * Gets the joint constraint such that it corresponds to the passed joint_state
@@ -51,11 +53,11 @@ class MoveItHelpers {
      * Can be an overestimation of it, but should not underestimate.
      */
     /*static PositionConstraintPtr getCombinedPoseConstraint(
-            const std::string &link_name, 
-            const geometry_msgs::PoseStamped &target_pose, 
-            float tolerance_pos, 
-            const geometry_msgs::PoseStamped& target_pose2, 
-            float tolerance_pos2, 
+            const std::string &link_name,
+            const geometry_msgs::PoseStamped &target_pose,
+            float tolerance_pos,
+            const geometry_msgs::PoseStamped& target_pose2,
+            float tolerance_pos2,
             float maxArmReachDistance);
             */
 
@@ -64,10 +66,10 @@ class MoveItHelpers {
      * Can be an overestimation of it, but should not underestimate.
      */
     static PositionConstraintPtr getSpherePoseConstraint(
-            const std::string &link_name, 
-            const geometry_msgs::PoseStamped &target_pose, 
-            float maxArmReachDistance);
-    
+        const std::string &link_name,
+        const geometry_msgs::PoseStamped &target_pose,
+        float maxArmReachDistance);
+
     /**
      * \param boxOrgin the origin of the box
      */
@@ -98,16 +100,16 @@ class MoveItHelpers {
     /**
      */
     static SolidPrimitivePtr getConeBV(const Eigen::Vector3d& _fromPose,
-            const Eigen::Quaterniond& _fromOrientation, const Eigen::Vector3d& _direction, 
-            const double& radius_start, const double& radius_end, 
-            Eigen::Vector3d& bv_pose, Eigen::Quaterniond& bv_orientation);
+                                       const Eigen::Quaterniond& _fromOrientation, const Eigen::Vector3d& _direction,
+                                       const double& radius_start, const double& radius_end,
+                                       Eigen::Vector3d& bv_pose, Eigen::Quaterniond& bv_orientation);
 
     /**
      */
     static SolidPrimitivePtr getCylinderBV(const Eigen::Vector3d& _fromPose,
-            const Eigen::Quaterniond& _fromOrientation, 
-            const Eigen::Vector3d& _direction, const double& radius,
-            Eigen::Vector3d& bv_pose, Eigen::Quaterniond& bv_orientation);
+                                           const Eigen::Quaterniond& _fromOrientation,
+                                           const Eigen::Vector3d& _direction, const double& radius,
+                                           Eigen::Vector3d& bv_pose, Eigen::Quaterniond& bv_orientation);
 };
 
 }  // namespace object_moveit

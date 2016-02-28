@@ -39,19 +39,19 @@ public:
     /**
      * Gets the current collision matrix of MoveIt!.
      */
-    bool getCurrentMoveItAllowedCollisionMatrix( moveit_msgs::AllowedCollisionMatrix& matrix);
+    bool getCurrentMoveItAllowedCollisionMatrix(moveit_msgs::AllowedCollisionMatrix& matrix);
 
     /**
      * Sets the given collision matrix in MoveIt!.
      */
-    bool setAllowedMoveItCollisionMatrix(moveit_msgs::AllowedCollisionMatrix& m); 
+    bool setAllowedMoveItCollisionMatrix(moveit_msgs::AllowedCollisionMatrix& m);
 
     /**
      * Allows collisions between collision object \e name and all links of the robot
      * given in \e linkNames
      */
-    bool addAllowedMoveItCollision(const std::string& name, const std::vector<std::string>& linkNames); 
-    
+    bool addAllowedMoveItCollision(const std::string& name, const std::vector<std::string>& linkNames);
+
     /**
      * Set the pair <name1, name2> in the collision matrix with the \e flag. "true" is for allowed
      * collisions (no collision checks needed).
@@ -69,31 +69,31 @@ public:
      * not known as collision object to MoveIt!.
      */
     bool attachMoveItObjectToRobot(const std::string& name, const std::string& link_name,
-            const std::vector<std::string>& allowedTouchLinks); 
+                                   const std::vector<std::string>& allowedTouchLinks);
 
     /**
      * Detaches the object which has previously been attached with attachMoveItObjectToRobot()
      * from the robot. Returns false if it wasn't previously attached or MoveIt! planning scene
      * could not be reached.
      */
-    bool detachMoveItObjectFromRobot(const std::string& name); 
+    bool detachMoveItObjectFromRobot(const std::string& name);
 
-    private:
+private:
 
     /**
      * Expands the collision matrix by appending one row, and one column, and set all fields to \e default_val.
-     */    
-    void expandMoveItCollisionMatrix(const std::string& name, moveit_msgs::AllowedCollisionMatrix& m, bool default_val); 
+     */
+    void expandMoveItCollisionMatrix(const std::string& name, moveit_msgs::AllowedCollisionMatrix& m, bool default_val);
 
 
     bool getMoveItScene(octomap_msgs::OctomapWithPose & octomap,
-            std::vector<moveit_msgs::CollisionObject>& collision_objects); 
+                        std::vector<moveit_msgs::CollisionObject>& collision_objects);
 
     bool hasObject(const std::string& name, const std::vector<moveit_msgs::AttachedCollisionObject>& objs,
-            moveit_msgs::AttachedCollisionObject& o);
+                   moveit_msgs::AttachedCollisionObject& o);
 
     bool hasObject(const std::string& name, const std::vector<moveit_msgs::CollisionObject>& objs,
-            moveit_msgs::CollisionObject& o);
+                   moveit_msgs::CollisionObject& o);
 
     bool removeObject(const std::string& name, std::vector<moveit_msgs::CollisionObject>& objs);
 
@@ -101,7 +101,7 @@ public:
 
     /**
      * Makes sure an entry for this name is added to the collision matrix if it doesn't exist,
-     * and then returns the iterator to the ACM.entry_names for it. 
+     * and then returns the iterator to the ACM.entry_names for it.
      */
     std::vector<std::string>::iterator ensureExistsInACM(
         const std::string& name, moveit_msgs::AllowedCollisionMatrix& m, bool initFlag);
@@ -109,7 +109,7 @@ public:
 
     std::string SET_PLANNING_SCENE_TOPIC;
     std::string GET_PLANNING_SCENE_TOPIC;
-    
+
     ros::Publisher planning_scene_publisher;
     ros::ServiceClient planning_scene_client;
 };  // class

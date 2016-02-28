@@ -13,6 +13,10 @@ RUN apt-get update && apt-get install -y \
 COPY moveit_controller_multidof /catkin_ws/src/moveit_controller_multidof
 COPY object_moveit /catkin_ws/src/object_moveit
 
+# Get the repository tools-pkgs as well, for the convenience_* dependencies
+RUN bin/bash -c "cd /catkin_ws/src \
+    && git clone https://github.com/JenniferBuehler/tools-pkgs.git"
+
 # Build
 RUN bin/bash -c "source /.bashrc \
     && cd /catkin_ws \

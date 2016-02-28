@@ -22,7 +22,7 @@ namespace object_moveit
 /**
  * Takes objects of type object_msgs/Object published a topic and transforms and re-publishes it
  * into a moveit_msgs/CollisionObject.
- * 
+ *
  * The object information is read from incoming object_msgs/Object messages. If not all information
  * is available, a service of type object_msgs/ObjectInfoRequest.srv is sent, e.g. to get the
  * geometry details when required.
@@ -31,23 +31,24 @@ namespace object_moveit
  *
  * 1. Publishing the collision object on /collision_objects which is read by move_group.
  * 2. Another approach is described in
- *      [this PR2 tutorial](http://docs.ros.org/api/pr2_moveit_tutorials/html/planning/src/doc/planning_scene_ros_api_tutorial.html), 
+ *      [this PR2 tutorial](http://docs.ros.org/api/pr2_moveit_tutorials/html/planning/src/doc/planning_scene_ros_api_tutorial.html),
  *      in section *"Add object to environment": publising a planning scene diff (message moveit_msgs::PlanningScene)*.
- * 
+ *
  * The approach to be taken can be set with a ROS parameter is set for it.
  *
  * The parameters for this class can be specified in a YAML file,
  * which needs to be loaded onto the ROS parameter server
- * under **namespace object_moveit**. An example is given in the directory *config*, filename "CollisionObjectsGenerator.yaml" 
+ * under **namespace object_moveit**. An example is given in the directory *config*, filename "CollisionObjectsGenerator.yaml"
  *
  * \author Jennifer Buehler
  **/
-class ObjectMessageGenerator {
+class ObjectMessageGenerator
+{
 private:
 
     typedef object_msgs::Object ObjectMsg;
     typedef object_msgs::ObjectInfo ObjectInfoMsg;
-    typedef std::map<std::string,moveit_msgs::CollisionObject> ObjToPublishMap;
+    typedef std::map<std::string, moveit_msgs::CollisionObject> ObjToPublishMap;
 
 public:
 
@@ -63,7 +64,7 @@ private:
 
     void disconnectPub(const ros::SingleSubscriberPublisher& p);
 
-    void publishCollisionsEvent(const ros::TimerEvent& e); 
+    void publishCollisionsEvent(const ros::TimerEvent& e);
 
     /**
       * Callback for object message
@@ -82,10 +83,10 @@ private:
      */
     moveit_msgs::CollisionObject transferContent(const ObjectMsg& msg, bool skipGeometry);
 
-    std::vector<moveit_msgs::CollisionObject> getCurrentCollisionObjects(bool only_names=true);
+    std::vector<moveit_msgs::CollisionObject> getCurrentCollisionObjects(bool only_names = true);
 
 
-    std::set<std::string> getCurrentCollisionObjectNames(); 
+    std::set<std::string> getCurrentCollisionObjectNames();
 
 
 
@@ -102,13 +103,13 @@ private:
     ros::Publisher planning_scene_pub;
 
     ros::Subscriber object_sub;
-    
+
     ros::ServiceClient object_info_client;
 
     ros::ServiceClient planning_scene_client;
 
 
-    // all objects which were already added 
+    // all objects which were already added
     std::set<std::string> addedObjects;
 
     // objects to skip as collision objects:
