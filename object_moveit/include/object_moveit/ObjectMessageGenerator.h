@@ -84,11 +84,10 @@ private:
     moveit_msgs::CollisionObject transferContent(const ObjectMsg& msg, bool skipGeometry);
 
     std::vector<moveit_msgs::CollisionObject> getCurrentCollisionObjects(bool only_names = true);
-
-
     std::set<std::string> getCurrentCollisionObjectNames();
 
-
+    std::vector<moveit_msgs::AttachedCollisionObject> getCurrentAttachedCollisionObjects();
+    std::set<std::string> getCurrentAttachedCollisionObjectNames();
 
     ros::NodeHandle node_priv, node;
     std::string OBJECTS_TOPIC;

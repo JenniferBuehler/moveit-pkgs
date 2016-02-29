@@ -33,7 +33,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES grasped_object_handler moveit_collision_matrix_manipulator 
+  LIBRARIES moveit_grasped_object_handler moveit_collision_matrix_manipulator 
   CATKIN_DEPENDS geometry_msgs sensor_msgs moveit_msgs
       roscpp shape_msgs std_msgs eigen_conversions convenience_ros_functions
 #  DEPENDS system_lib

@@ -20,10 +20,7 @@ GraspedObjectHandlerMoveIt::GraspedObjectHandlerMoveIt(
     subscribeAndAdvertise(get_planning_scene_service, set_planning_scene_topic);
 }
 
-/**
- * Allow collision between the hand links and the object.
- */
-/*bool GraspedObjectHandlerMoveIt::attachObjectToRobot(const std::string& object_name, const std::string& attach_link_name) {
+bool GraspedObjectHandlerMoveIt::attachObjectToRobot(const std::string& object_name, const std::string& attach_link_name) {
 
     if (!attachObjectToRobot(object_name, attach_link_name, gripperLinkNames)) {
         ROS_ERROR("Could not attach object to robot");
@@ -32,7 +29,7 @@ GraspedObjectHandlerMoveIt::GraspedObjectHandlerMoveIt(
 
     ROS_INFO_STREAM("Have attached object "<<object_name<<" to "<<attach_link_name);
     return true;
-}*/
+}
 
 bool GraspedObjectHandlerMoveIt::detachObjectFromRobot(const std::string& object_name)
 {
@@ -70,6 +67,11 @@ bool GraspedObjectHandlerMoveIt::detachObjectFromRobot(const std::string& object
         //remove object from planning scene
         attObj.object.operation = attObj.object.REMOVE;
         planning_scene.robot_state.attached_collision_objects.push_back(attObj);
+
+        // add add it to the planning scene again
+        moveit_msgs::CollisionObject collObj=attObj.object;
+        collObj.operation = moveit_msgs::CollisionObject::ADD;
+        planning_scene.world.collision_objects.push_back(collObj);
     }
 
     //XXX BEGIN HACK
@@ -167,7 +169,7 @@ bool GraspedObjectHandlerMoveIt::attachObjectToRobot(const std::string& name,
     }
     else
     {
-        //remove object from planning scene
+        // remove object from planning scene because now it's attached to the robot.
         collObj.operation = collObj.REMOVE;
         planning_scene.world.collision_objects.push_back(collObj);
     }
@@ -179,8 +181,6 @@ bool GraspedObjectHandlerMoveIt::attachObjectToRobot(const std::string& name,
         return false;
     }
 
-
-
     moveit_msgs::AttachedCollisionObject attached_object;
     attached_object.object = collObj;
     attached_object.object.header.frame_id = link_name;
@@ -189,7 +189,6 @@ bool GraspedObjectHandlerMoveIt::attachObjectToRobot(const std::string& name,
 
     attached_object.object.operation = attached_object.object.ADD;
     planning_scene.robot_state.attached_collision_objects.push_back(attached_object);
-
 
     moveit_planning_scene_publisher.publish(planning_scene);
 
@@ -289,6 +288,14 @@ void GraspedObjectHandlerMoveIt::subscribeAndAdvertise(const std::string& get_pl
     moveit_planning_scene_publisher = node.advertise<moveit_msgs::PlanningScene>(set_planning_scene_topic, 1);
 }
 
+void GraspedObjectHandlerMoveIt::waitForSubscribers()
+{
+    while (moveit_planning_scene_publisher.getNumSubscribers() == 0)
+    {
+        ROS_INFO("Waiting for subscribers...");
+        ros::Duration(0.5).sleep();
+    }
+}
 
 bool GraspedObjectHandlerMoveIt::transformPose(const geometry_msgs::Pose& pose,
         const std::string& from_frame, const std::string& to_frame, geometry_msgs::Pose& p)

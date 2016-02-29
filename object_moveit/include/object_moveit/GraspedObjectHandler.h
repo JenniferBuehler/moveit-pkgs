@@ -48,19 +48,18 @@ class GraspedObjectHandlerMoveIt: public GraspedObjectHandler
 public:
     /**
      * \param _gripperLinkNames names of the gripper links. Those are the links which are allowed to collide
-     *          with the object being grasped.
+     *          with the object being grasped (moveit_msgs::AttachedCollisionObject.touch_links)
      */
     GraspedObjectHandlerMoveIt(
         ros::NodeHandle& n, const std::vector<std::string>& _gripperLinkNames,
         const std::string& get_planning_scene_service = "/get_planning_scene",
         const std::string& set_planning_scene_topic = "/planning_scene");
 
-    /**
-     * Allow collision between the hand links and the object.
-     */
-    /*virtual bool attachObjectToRobot(const std::string& object_name, const std::string& attach_link_name);*/
+    virtual bool attachObjectToRobot(const std::string& object_name, const std::string& attach_link_name);
 
     virtual bool detachObjectFromRobot(const std::string& object_name);
+
+    void waitForSubscribers();
 
 private:
     bool attachObjectToRobot(const std::string& name, const std::string& link_name, const std::vector<std::string>& allowedTouchLinks);

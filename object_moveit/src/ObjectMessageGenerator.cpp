@@ -33,11 +33,9 @@ ObjectMessageGenerator::ObjectMessageGenerator(ros::NodeHandle& _node_priv, ros:
     _node.param<std::string>("moveit_get_planning_scene_topic", GET_PLANNING_SCENE_SERVICE, GET_PLANNING_SCENE_SERVICE);
     ROS_INFO("Got moveit_get_planning_scene_topic: <%s>", GET_PLANNING_SCENE_SERVICE.c_str());
 
-
     SET_PLANNING_SCENE_TOPIC = DEFAULT_SET_PLANNING_SCENE_TOPIC;
     _node.param<std::string>("moveit_set_planning_scene_topic", SET_PLANNING_SCENE_TOPIC, SET_PLANNING_SCENE_TOPIC);
     ROS_INFO("Got moveit_set_planning_scene_topic: <%s>", SET_PLANNING_SCENE_TOPIC.c_str());
-
 
     _node.param<bool>("use_planning_scene_diff", USE_PLANNING_SCENE_DIFF, DEFAULT_USE_PLANNING_SCENE_DIFF);
     ROS_INFO("Got use_planning_scene_diff: <%i>", USE_PLANNING_SCENE_DIFF);
@@ -72,7 +70,6 @@ ObjectMessageGenerator::ObjectMessageGenerator(ros::NodeHandle& _node_priv, ros:
         pch = strtok(NULL, " ,;");
     }
 
-
     if (REQUEST_OBJECTS_TOPIC != "") object_info_client = node.serviceClient<object_msgs::ObjectInfo>(REQUEST_OBJECTS_TOPIC);
     planning_scene_client = node.serviceClient<moveit_msgs::GetPlanningScene>(GET_PLANNING_SCENE_SERVICE);
 
@@ -88,7 +85,6 @@ ObjectMessageGenerator::ObjectMessageGenerator(ros::NodeHandle& _node_priv, ros:
     publishCollisionsTimer = node_priv.createTimer(rate, &ObjectMessageGenerator::publishCollisionsEvent, this);
 
     initExistingObj = false;
-
 }
 
 ObjectMessageGenerator::~ObjectMessageGenerator()
@@ -184,14 +180,23 @@ void ObjectMessageGenerator::receiveObject(const ObjectMsg& msg)
         return;
     }
 
-    mutex.lock();
+    std::set<std::string> curr_attached_objs = getCurrentAttachedCollisionObjectNames();
+    if (curr_attached_objs.find(id) != curr_attached_objs.end())
+    {   // if attached to the robot, we cannot send collision updates,
+        // as the object has purposedly been removed from the planning scene
+        // ROS_INFO_STREAM("Object '"<<id<<"' is currently attached to robot, so not updating the collision object");
+        return;
+    }
+
+
+    boost::unique_lock<boost::mutex>(mutex);
+
     ObjToPublishMap::iterator existing = objsToPublish.find(id);
     if (existing != objsToPublish.end())
     {
         //we already have this object to publish, so only allow
         //to overwrite the poses
         updatePose(msg, existing->second);
-        mutex.unlock();
         return;
     }
 
@@ -211,9 +216,9 @@ void ObjectMessageGenerator::receiveObject(const ObjectMsg& msg)
         addedObjects.insert(id);
         acmManip.addAllowedMoveItCollision(id, allowedCollisionLinks);
     }
-    else
-    {
-        // We already have had geometry sent for this object. We may want to enforce a MOVE operation.
+    else  // We already have had geometry sent for this object.
+    {   
+        // We may want to enforce a MOVE operation.
         // Only if geometry is actually specified in the message, we'll consider another ADD.
         if ((msg.content == object_msgs::Object::SHAPE) && !msg.primitives.empty())
         {
@@ -234,8 +239,6 @@ void ObjectMessageGenerator::receiveObject(const ObjectMsg& msg)
     }*/
 
     objsToPublish.insert(std::make_pair(id, obj));
-
-    mutex.unlock();
 }
 
 moveit_msgs::CollisionObject ObjectMessageGenerator::getCollisionGeometry(const std::string& name)
@@ -302,7 +305,6 @@ moveit_msgs::CollisionObject ObjectMessageGenerator::transferContent(const Objec
 
 std::vector<moveit_msgs::CollisionObject> ObjectMessageGenerator::getCurrentCollisionObjects(bool only_names)
 {
-
     if (!planning_scene_client.exists()) return std::vector<moveit_msgs::CollisionObject>();
 
     /*while (!planning_scene_client.exists() && !planning_scene_client.waitForExistence(ros::Duration(1))) {
@@ -332,11 +334,46 @@ std::vector<moveit_msgs::CollisionObject> ObjectMessageGenerator::getCurrentColl
 
 std::set<std::string> ObjectMessageGenerator::getCurrentCollisionObjectNames()
 {
-    std::vector<moveit_msgs::CollisionObject> obj = getCurrentCollisionObjects();
+    std::vector<moveit_msgs::CollisionObject> obj = getCurrentCollisionObjects(true);
     std::set<std::string> ret;
     for (std::vector<moveit_msgs::CollisionObject>::iterator it = obj.begin(); it != obj.end(); ++it)
     {
         ret.insert(it->id);
+    }
+    return ret;
+}
+
+std::vector<moveit_msgs::AttachedCollisionObject> ObjectMessageGenerator::getCurrentAttachedCollisionObjects()
+{
+    if (!planning_scene_client.exists()) return std::vector<moveit_msgs::AttachedCollisionObject>();
+
+    /*while (!planning_scene_client.exists() && !planning_scene_client.waitForExistence(ros::Duration(1))) {
+        ROS_INFO("Waiting for planning scene service (topic %s) to become available...",GET_PLANNING_SCENE_SERVICE.c_str());
+    }*/
+
+    moveit_msgs::GetPlanningScene srv;
+    srv.request.components.components =
+        moveit_msgs::PlanningSceneComponents::ROBOT_STATE_ATTACHED_OBJECTS;
+
+    if (!planning_scene_client.call(srv))
+    {
+        ROS_ERROR("Can't obtain planning scene");
+        return std::vector<moveit_msgs::AttachedCollisionObject>();
+    }
+
+    moveit_msgs::PlanningScene& scene = srv.response.scene;
+    return scene.robot_state.attached_collision_objects;
+}
+
+
+
+std::set<std::string> ObjectMessageGenerator::getCurrentAttachedCollisionObjectNames()
+{
+    std::vector<moveit_msgs::AttachedCollisionObject> obj = getCurrentAttachedCollisionObjects();
+    std::set<std::string> ret;
+    for (std::vector<moveit_msgs::AttachedCollisionObject>::iterator it = obj.begin(); it != obj.end(); ++it)
+    {
+        ret.insert(it->object.id);
     }
     return ret;
 }
