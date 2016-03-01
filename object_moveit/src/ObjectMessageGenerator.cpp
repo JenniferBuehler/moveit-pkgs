@@ -208,6 +208,11 @@ void ObjectMessageGenerator::receiveObject(const ObjectMsg& msg)
         {
             ROS_INFO("Object not added yet to the system, so retreiving object geometry... %s", __FILE__);
             obj = getCollisionGeometry(id);
+            if (obj.id != id)
+            {   
+                ROS_ERROR_STREAM("Object '" << id << "' geometry could not be retrieved. It cannot be properly added to MoveIt!");
+                return;
+            }
         }
         else
         {
@@ -219,16 +224,55 @@ void ObjectMessageGenerator::receiveObject(const ObjectMsg& msg)
     else  // We already have had geometry sent for this object.
     {   
         // We may want to enforce a MOVE operation.
-        // Only if geometry is actually specified in the message, we'll consider another ADD.
+        // Only if the object is not currently in the MoveIt! collision environment, or
+        // if geometry is actually specified in the message (e.g. to change shape), we'll consider another ADD.
+
         if ((msg.content == object_msgs::Object::SHAPE) && !msg.primitives.empty())
-        {
+        {   // full geometry specified in msg of type ADD. Use the full geometry.
             obj = transferContent(msg, false);
         }
         else
-        {
-            if (msg.content == object_msgs::Object::SHAPE)
+        {   // this is either a MOVE operation, or the geometry is empty.
+            // if the object is not in the MoveIt! collision environment, we have to request the geometry.
+
+            std::set<std::string> curr_coll_objs = getCurrentCollisionObjectNames();
+            bool object_in_scene = curr_coll_objs.find(id) != curr_coll_objs.end();
+            moveit_msgs::CollisionObject current_object;
+            bool use_current_object_geometry = false;
+            // if the object is not in the MoveIt! environment, or this is a SHAPE operation but the
+            // geometry was not specivied, then retrieve the geometry, as we have to do a MoveIt ADD operation.
+            if (!object_in_scene || ((msg.content == object_msgs::Object::SHAPE) && msg.primitives.empty()))
+            {
+                ROS_INFO_STREAM("Object '" << id << "'not added yet to the system, so retreiving object geometry...");
+                current_object = getCollisionGeometry(id);
+                if ((current_object.id == id) && (!current_object.primitives.empty()))
+                {   // successfully retrieved geometry.
+                    use_current_object_geometry = true;
+                }
+                else
+                {
+                    ROS_ERROR_STREAM("Object '" << id << "' geometry could not be retrieved. It cannot be properly added to MoveIt! again.");
+                }
+            }
+
+            if ((msg.content == object_msgs::Object::SHAPE) && object_in_scene)
                 ROS_WARN("We already have had geometry sent for object '%s', so enforcing a MOVE operation.", msg.name.c_str());
-            obj = transferContent(msg, true);
+
+            obj = transferContent(msg, true);  // transfer all content except geometry
+
+            if (use_current_object_geometry)
+            {
+                obj.primitives = current_object.primitives;
+                // obj.primitive_poses will have been set by the message (msg)
+                obj.meshes = current_object.meshes;
+                // XXX not sure if this is needed, need to define precisely whether they are always
+                // included (also in MOVE operation) or only when geometry is included as well. Copy the most recent
+                // information just to be sure.
+                obj.mesh_poses = current_object.mesh_poses;
+            }
+                
+            // if the object is not in the scene, we have to enforce an ADD operation.
+            if (!object_in_scene) obj.operation=moveit_msgs::CollisionObject::ADD;
         }
     }
 
@@ -249,6 +293,7 @@ moveit_msgs::CollisionObject ObjectMessageGenerator::getCollisionGeometry(const 
     }*/
     object_msgs::ObjectInfo srv;
     srv.request.name = name;
+    srv.request.get_geometry = true;
     if (!object_info_client.call(srv))
     {
         ROS_ERROR("Could not add object %s because service request failed.", name.c_str());

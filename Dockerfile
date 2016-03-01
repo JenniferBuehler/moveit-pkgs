@@ -16,10 +16,9 @@ RUN apt-get update && apt-get install -y git
 COPY moveit_controller_multidof /catkin_ws/src/moveit_controller_multidof
 COPY object_moveit /catkin_ws/src/object_moveit
 
-# Get the repository tools-pkgs as well, for the convenience_* dependencies
+# Get the repository convenience-pkgs as well
 RUN bin/bash -c "cd /catkin_ws/src \
-    && git clone https://github.com/JenniferBuehler/tools-pkgs.git \
-    && rm -rf tools-pkgs/inventor_viewer"
+    && git clone https://github.com/JenniferBuehler/convenience-pkgs.git"
 
 # Build
 RUN bin/bash -c "source /.bashrc \

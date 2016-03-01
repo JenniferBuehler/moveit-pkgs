@@ -68,66 +68,24 @@ bool GraspedObjectHandlerMoveIt::detachObjectFromRobot(const std::string& object
         attObj.object.operation = attObj.object.REMOVE;
         planning_scene.robot_state.attached_collision_objects.push_back(attObj);
 
-        // add add it to the planning scene again
+        // Add object to the planning scene again
+        // INFO: This was taken out, as the object recognition (along with MoveI! collision
+        // object generator) should take care of adding the object to the scene again.
+        // Transform the object into the link coordinate frame:
+        /*moveit_msgs::CollisionObject collision_object=attObj.object;
+        if (!transformCollisionObject(target_frame, collision_object)) {
+            ROS_ERROR("GraspedObjectHandler: Could nto transform object to world frame");
+            return false;
+        }
+        //send object as MoveIt collision object:
         moveit_msgs::CollisionObject collObj=attObj.object;
         collObj.operation = moveit_msgs::CollisionObject::ADD;
-        planning_scene.world.collision_objects.push_back(collObj);
+        planning_scene.world.collision_objects.push_back(collObj);*/
     }
-
-    //XXX BEGIN HACK
-    // Update the global information about the object
-    // This is to artificially re-recognise the object when it has been ungrasped.
-    // It will retrieve the object information (after waiting a while so  it has fallen down) from this object
-    // info manager (original implementation:  #include <capabilities/ObjectInfoManager.h>)
-    // It currently only works with Gazebo. initialize to NULL in order to deactivate hack.
-    /* if (object_info_manager.get()){
-        //ROS_WARN("GraspedObjectHandler: Updating information on object %s",object_name.c_str());
-        ros::Duration(1.0).sleep(); //wait a little to make sure the object has fallen
-        object_info_manager->updateObjectInfo(object_name,true,global_frame);
-    }*/
-
-    //XXX END HACK
-
-    //transform the object into the link coordinate frame
-    /*moveit_msgs::CollisionObject collision_object=attObj.object;
-    if (!transformCollisionObject(target_frame, collision_object)) {
-        ROS_ERROR("GraspedObjectHandler: Could nto transform object to world frame");
-        return false;
-    }
-
-    //send object as MoveIt collision object.
-    collision_object.operation=collision_object.ADD;
-    planning_scene.world.collision_objects.push_back(collision_object);
-    */
 
     moveit_planning_scene_publisher.publish(planning_scene);
 
-    //ROS_INFO("Have detached object. %s",__FILE__);
-    /*
-    XXX for now, we will not add the collision object again. This has to be done by the object recognition.
-    Just re-adding it will leave it handing in the air. We first have to observe (recognize) where it has actually landed.
-
-    while (true) {
-        srv.request.components.components=moveit_msgs::PlanningSceneComponents::WORLD_OBJECT_NAMES;
-
-        //ROS_INFO("Requesting scene to see if object is detached..");
-
-        if (!moveit_planning_scene_client.call(srv)) {
-            ROS_ERROR("Can't obtain planning scene in order to detach object.");
-            return false;
-        }
-
-        //ROS_INFO("Scene obtained");
-        moveit_msgs::CollisionObject o;
-        if (hasObject(object_name,srv.response.scene.world.collision_objects,o)){
-            ROS_INFO("Scene is updated with detached object.");
-            break;
-        }
-        ROS_INFO("Waiting for scene update to detach object...");
-        ros::Duration(0.5).sleep();
-    }*/
     //ROS_INFO("Successfully detached object.");
-
     return true;
 }
 
