@@ -1,4 +1,4 @@
-#include <object_moveit/ObjectMessageGenerator.h>
+#include <moveit_object_handling/ObjectMessageGenerator.h>
 
 #include <iostream>
 
@@ -11,7 +11,7 @@
 
 #define DEFAULT_PUBLISH_COLLISION_RATE 30
 
-using object_moveit::ObjectMessageGenerator;
+using moveit_object_handling::ObjectMessageGenerator;
 
 ObjectMessageGenerator::ObjectMessageGenerator(ros::NodeHandle& _node_priv, ros::NodeHandle& _node_pub) :
     node_priv(_node_priv),
@@ -19,7 +19,7 @@ ObjectMessageGenerator::ObjectMessageGenerator(ros::NodeHandle& _node_priv, ros:
     acmManip(_node_priv)
 {
 
-    ros::NodeHandle _node("/object_moveit");
+    ros::NodeHandle _node("/moveit_object_handling");
     _node.param<std::string>("world_objects_topic", OBJECTS_TOPIC, DEFAULT_OBJECTS_TOPIC);
     ROS_INFO("Got objects topic name: <%s>", OBJECTS_TOPIC.c_str());
 

@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get update && apt-get install -y git
     
 COPY moveit_controller_multidof /catkin_ws/src/moveit_controller_multidof
-COPY object_moveit /catkin_ws/src/object_moveit
+COPY moveit_object_handling /catkin_ws/src/moveit_object_handling
 
 # Get the repository convenience-pkgs as well
 RUN bin/bash -c "cd /catkin_ws/src \

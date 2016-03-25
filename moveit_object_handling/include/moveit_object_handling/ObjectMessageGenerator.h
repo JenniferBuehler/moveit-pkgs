@@ -14,9 +14,9 @@
 #include <moveit_msgs/PlanningScene.h>
 #include <boost/thread/mutex.hpp>
 
-#include <object_moveit/MoveItCollisionMatrixManipulator.h>
+#include <moveit_object_handling/MoveItCollisionMatrixManipulator.h>
 
-namespace object_moveit
+namespace moveit_object_handling
 {
 
 /**
@@ -38,7 +38,7 @@ namespace object_moveit
  *
  * The parameters for this class can be specified in a YAML file,
  * which needs to be loaded onto the ROS parameter server
- * under **namespace object_moveit**. An example is given in the directory *config*, filename "CollisionObjectsGenerator.yaml"
+ * under **namespace moveit_object_handling**. An example is given in the directory *config*, filename "CollisionObjectsGenerator.yaml"
  *
  * \author Jennifer Buehler
  **/
@@ -135,6 +135,6 @@ private:
     bool initExistingObj;
 };
 
-}  // namespace object_moveit
+}  // namespace moveit_object_handling
 
 #endif  // MOVEIT_OBJECTS_OBJECTMESSAGEGENERATOR_H

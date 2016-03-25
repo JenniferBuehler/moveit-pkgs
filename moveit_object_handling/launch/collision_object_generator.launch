@@ -1,0 +1,15 @@
+<launch>
+
+    <arg name="config_file" default="$(find moveit_object_handling)/config/CollisionObjectsGenerator.yaml"/>
+
+    <rosparam ns="moveit_object_handling" file="$(arg config_file)"/>
+
+	# name of the node
+	<arg name="node_name" default="moveit_collisionobject_generator"/>
+
+	###############################################
+	# Start the node which will publish moveit::CollisionObject messages.
+	###############################################
+	<node name="$(arg node_name)" pkg="moveit_object_handling" type="moveit_collisionobject_generator" respawn="true" output="screen"/>
+</launch>
+

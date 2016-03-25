@@ -1,7 +1,7 @@
-#include <object_moveit/MoveItHelpers.h>
+#include <moveit_object_handling/MoveItHelpers.h>
 #include <shape_tools/solid_primitive_dims.h>
 
-using object_moveit::MoveItHelpers;
+using moveit_object_handling::MoveItHelpers;
 
 std::ostream& operator<<(std::ostream& o, const Eigen::Quaterniond& q)
 {
@@ -57,7 +57,7 @@ shape_msgs::SolidPrimitive getSphere(const double& radius)
     return bv;
 }
 
-moveit_msgs::PositionConstraint object_moveit::MoveItHelpers::getBoxConstraint(const std::string &link_name,
+moveit_msgs::PositionConstraint moveit_object_handling::MoveItHelpers::getBoxConstraint(const std::string &link_name,
         const geometry_msgs::PoseStamped& boxOrigin, const double& x, const double& y, const double& z)
 {
 
@@ -83,7 +83,7 @@ moveit_msgs::PositionConstraint object_moveit::MoveItHelpers::getBoxConstraint(c
 }
 
 #if 0
-bool object_moveit::MoveItHelpers::getCylinderConstraint(const std::string &link_name,
+bool moveit_object_handling::MoveItHelpers::getCylinderConstraint(const std::string &link_name,
         const geometry_msgs::PoseStamped& from, const geometry_msgs::PoseStamped& to,
         const double& radius, moveit_msgs::PositionConstraint& result)
 {
@@ -111,7 +111,7 @@ bool object_moveit::MoveItHelpers::getCylinderConstraint(const std::string &link
 }
 #endif
 
-object_moveit::MoveItHelpers::SolidPrimitivePtr object_moveit::MoveItHelpers::getCylinderBV(
+moveit_object_handling::MoveItHelpers::SolidPrimitivePtr moveit_object_handling::MoveItHelpers::getCylinderBV(
     const Eigen::Vector3d& _fromPose, const Eigen::Quaterniond& _fromOrientation,
     const Eigen::Vector3d& _direction, const double& radius,
     Eigen::Vector3d& bv_pose, Eigen::Quaterniond& bv_orientation)
@@ -146,7 +146,7 @@ object_moveit::MoveItHelpers::SolidPrimitivePtr object_moveit::MoveItHelpers::ge
 }
 
 /*
-moveit_msgs::PositionConstraint object_moveit::MoveItHelpers::getCylinderConstraint(const std::string &link_name,
+moveit_msgs::PositionConstraint moveit_object_handling::MoveItHelpers::getCylinderConstraint(const std::string &link_name,
         const geometry_msgs::PoseStamped& from, const geometry_msgs::Vector3& dir,
         const double& radius)
 {
@@ -201,7 +201,7 @@ moveit_msgs::PositionConstraint object_moveit::MoveItHelpers::getCylinderConstra
 }
 */
 
-object_moveit::MoveItHelpers::SolidPrimitivePtr object_moveit::MoveItHelpers::getConeBV(
+moveit_object_handling::MoveItHelpers::SolidPrimitivePtr moveit_object_handling::MoveItHelpers::getConeBV(
     const Eigen::Vector3d& _fromPose, const Eigen::Quaterniond& _fromOrientation,
     const Eigen::Vector3d& _direction, const double& radius_start, const double& radius_end,
     Eigen::Vector3d& bv_pose, Eigen::Quaterniond& bv_orientation)
@@ -280,7 +280,7 @@ object_moveit::MoveItHelpers::SolidPrimitivePtr object_moveit::MoveItHelpers::ge
 }
 
 
-/*moveit_msgs::PositionConstraint object_moveit::MoveItHelpers::getConeConstraint(const std::string &link_name,
+/*moveit_msgs::PositionConstraint moveit_object_handling::MoveItHelpers::getConeConstraint(const std::string &link_name,
         const geometry_msgs::PoseStamped& from, const geometry_msgs::Vector3& dir,
         const double& radius_start, const double& radius_end)
 {
@@ -362,7 +362,7 @@ object_moveit::MoveItHelpers::SolidPrimitivePtr object_moveit::MoveItHelpers::ge
 }
 */
 
-moveit_msgs::Constraints object_moveit::MoveItHelpers::getJointConstraint(const std::string& link_name,
+moveit_msgs::Constraints moveit_object_handling::MoveItHelpers::getJointConstraint(const std::string& link_name,
         const sensor_msgs::JointState& js, const float& joint_tolerance)
 {
 
@@ -382,7 +382,7 @@ moveit_msgs::Constraints object_moveit::MoveItHelpers::getJointConstraint(const 
 }
 
 
-moveit_msgs::OrientationConstraint object_moveit::MoveItHelpers::getOrientationConstraint(const std::string& link_name,
+moveit_msgs::OrientationConstraint moveit_object_handling::MoveItHelpers::getOrientationConstraint(const std::string& link_name,
         const geometry_msgs::QuaternionStamped& quat,
         const float& x_tolerance,
         const float& y_tolerance,
@@ -399,7 +399,7 @@ moveit_msgs::OrientationConstraint object_moveit::MoveItHelpers::getOrientationC
     return ocm;
 }
 
-object_moveit::MoveItHelpers::PositionConstraintPtr object_moveit::MoveItHelpers::getSpherePoseConstraint(
+moveit_object_handling::MoveItHelpers::PositionConstraintPtr moveit_object_handling::MoveItHelpers::getSpherePoseConstraint(
     const std::string &link_name,
     const geometry_msgs::PoseStamped &target_pose1,
     float maxArmReachDistance)
@@ -429,7 +429,7 @@ object_moveit::MoveItHelpers::PositionConstraintPtr object_moveit::MoveItHelpers
 }
 
 #if 0
-object_moveit::MoveItHelpers::PositionConstraintPtr object_moveit::MoveItHelpers::getCombinedPoseConstraint(
+moveit_object_handling::MoveItHelpers::PositionConstraintPtr moveit_object_handling::MoveItHelpers::getCombinedPoseConstraint(
     const std::string &link_name,
     const geometry_msgs::PoseStamped &target_pose1,
     float tolerance_pos1,
@@ -528,7 +528,7 @@ object_moveit::MoveItHelpers::PositionConstraintPtr object_moveit::MoveItHelpers
 }
 #endif
 
-moveit_msgs::Constraints object_moveit::MoveItHelpers::getPoseConstraint(const std::string &link_name,
+moveit_msgs::Constraints moveit_object_handling::MoveItHelpers::getPoseConstraint(const std::string &link_name,
         const geometry_msgs::PoseStamped &pose, double tolerance_pos, double tolerance_angle, int type)
 {
 
@@ -570,7 +570,7 @@ moveit_msgs::Constraints object_moveit::MoveItHelpers::getPoseConstraint(const s
         ocm.absolute_z_axis_tolerance = tolerance_angle;
         ocm.weight = 1.0;
     }/*else{
-        ROS_WARN("An unsupported constraint type was passed into object_moveit::MoveItHelpers::getPoseConstraint: %i",type);
+        ROS_WARN("An unsupported constraint type was passed into moveit_object_handling::MoveItHelpers::getPoseConstraint: %i",type);
     }*/
     return goal;
 }

@@ -11,7 +11,7 @@
 #include <moveit_msgs/Constraints.h>
 #include <eigen_conversions/eigen_msg.h>
 
-namespace object_moveit
+namespace moveit_object_handling
 {
 
 class MoveItHelpers
@@ -112,6 +112,6 @@ public:
                                            Eigen::Vector3d& bv_pose, Eigen::Quaterniond& bv_orientation);
 };
 
-}  // namespace object_moveit
+}  // namespace moveit_object_handling
 
 #endif  // OBJECT_MOVEIT_MOVEITHELPERS

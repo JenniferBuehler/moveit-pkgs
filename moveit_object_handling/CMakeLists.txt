@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(object_moveit)
+project(moveit_object_handling)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -67,7 +67,7 @@ add_executable(moveit_collisionobject_generator
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(object_moveit_node object_moveit_generate_messages_cpp)
+# add_dependencies(moveit_object_handling_node moveit_object_handling_generate_messages_cpp)
 add_dependencies(moveit_collisionobject_generator ${catkin_EXPORTED_TARGETS})
 add_dependencies(moveit_collision_matrix_manipulator ${catkin_EXPORTED_TARGETS})
 add_dependencies(moveit_grasped_object_handler ${catkin_EXPORTED_TARGETS})
@@ -99,7 +99,7 @@ target_link_libraries(moveit_grasped_object_handler
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS object_moveit object_moveit_node
+# install(TARGETS moveit_object_handling moveit_object_handling_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -124,7 +124,7 @@ target_link_libraries(moveit_grasped_object_handler
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_object_moveit.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_moveit_object_handling.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

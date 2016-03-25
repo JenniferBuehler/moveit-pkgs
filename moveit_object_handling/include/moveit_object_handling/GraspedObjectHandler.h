@@ -7,7 +7,7 @@
 #include <string>
 #include <moveit_msgs/AttachedCollisionObject.h>
 
-namespace object_moveit
+namespace moveit_object_handling
 {
 
 /**

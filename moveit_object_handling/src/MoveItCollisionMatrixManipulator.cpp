@@ -1,5 +1,5 @@
-#include <object_moveit/MoveItCollisionMatrixManipulator.h>
-#include <object_moveit/MoveItHelpers.h>
+#include <moveit_object_handling/MoveItCollisionMatrixManipulator.h>
+#include <moveit_object_handling/MoveItHelpers.h>
 
 #include <moveit_msgs/AllowedCollisionEntry.h>
 #include <moveit_msgs/GetCartesianPath.h>
@@ -9,11 +9,11 @@
 #define DEFAULT_SET_PLANNING_SCENE_TOPIC "/planning_scene"
 #define DEFAULT_GET_PLANNING_SCENE_TOPIC "/get_planning_scene"
 
-using object_moveit::MoveItCollisionMatrixManipulator;
+using moveit_object_handling::MoveItCollisionMatrixManipulator;
 
 MoveItCollisionMatrixManipulator::MoveItCollisionMatrixManipulator(ros::NodeHandle& nh)
 {
-    ros::NodeHandle _node("/object_moveit");
+    ros::NodeHandle _node("/moveit_object_handling");
 
     GET_PLANNING_SCENE_TOPIC = DEFAULT_GET_PLANNING_SCENE_TOPIC;
     _node.param<std::string>("moveit_get_planning_scene_topic", GET_PLANNING_SCENE_TOPIC, GET_PLANNING_SCENE_TOPIC);

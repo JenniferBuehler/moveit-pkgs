@@ -14,7 +14,7 @@
 
 #include <ros/ros.h>
 
-namespace object_moveit
+namespace moveit_object_handling
 {
 
 /**

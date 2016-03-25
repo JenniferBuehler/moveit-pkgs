@@ -1,10 +1,10 @@
-#include <object_moveit/GraspedObjectHandler.h>
+#include <moveit_object_handling/GraspedObjectHandler.h>
 #include <moveit_msgs/CollisionObject.h>
 #include <moveit_msgs/GetPlanningScene.h>
 #include <convenience_ros_functions/ROSFunctions.h>
 
-using object_moveit::GraspedObjectHandler;
-using object_moveit::GraspedObjectHandlerMoveIt;
+using moveit_object_handling::GraspedObjectHandler;
+using moveit_object_handling::GraspedObjectHandlerMoveIt;
 
 GraspedObjectHandlerMoveIt::GraspedObjectHandlerMoveIt(
     ros::NodeHandle& n, const std::vector<std::string>& _gripperLinkNames,
