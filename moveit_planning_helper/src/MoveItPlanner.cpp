@@ -199,7 +199,7 @@ double pickMax(const double pos, const double rel, const double extend){
 
 bool MoveItPlanner::makeWorkspace(const geometry_msgs::PoseStamped& from,
     const geometry_msgs::PoseStamped& to, 
-	float arm_reach_span, moveit_msgs::WorkspaceParameters& wspace){
+	float arm_reach_span, moveit_msgs::WorkspaceParameters& wspace) const{
 
 	static const float maxWait=2.0;
 	static const bool latestTime=false;
@@ -225,7 +225,7 @@ bool MoveItPlanner::makeWorkspace(const geometry_msgs::PoseStamped& from,
 
 bool MoveItPlanner::makeWorkspace(const geometry_msgs::PoseStamped& from,
 	float arm_reach_span, 
-    moveit_msgs::WorkspaceParameters& wspace){
+    moveit_msgs::WorkspaceParameters& wspace) const {
 
 	wspace.header=from.header;
 	wspace.min_corner.x= from.pose.position.x-fabs(arm_reach_span);
@@ -238,7 +238,8 @@ bool MoveItPlanner::makeWorkspace(const geometry_msgs::PoseStamped& from,
 }
 
 
-bool MoveItPlanner::isValidState(const moveit_msgs::RobotState& robotState, const std::string& group) {
+bool MoveItPlanner::isValidState(const moveit_msgs::RobotState& robotState, const std::string& group)
+{
 	//confirm valid robot state:
 	moveit_msgs::GetStateValidity::Request get_state_validity_request;
 	moveit_msgs::GetStateValidity::Response get_state_validity_response;
@@ -251,16 +252,20 @@ bool MoveItPlanner::isValidState(const moveit_msgs::RobotState& robotState, cons
 		ROS_ERROR("MoveIt! state valididty client not connected");
 		return false;
 	}
-	state_validity_client.call(get_state_validity_request, get_state_validity_response);
+	if (!state_validity_client.call(get_state_validity_request, get_state_validity_response))
+    {
+        ROS_ERROR("Failed to call MoveIt! state validity service");
+        return false;
+    }
 	if(get_state_validity_response.valid) {
-		//ROS_INFO("State was valid");
+		//ROS_INFO("State is valid");
 		//std::cout<<get_state_validity_response<<std::endl;
 		//std::cout<<"-----------"<<std::endl;
 		//std::cout<<robotState<<std::endl;
 		return true;
 		
 	} else {
-		ROS_ERROR("State was invalid");
+		ROS_ERROR("State is invalid");
 		std::cout<<get_state_validity_response<<std::endl;
 		//std::cout<<"-----------"<<std::endl;
 		//std::cout<<robotState<<std::endl;
@@ -340,8 +345,7 @@ moveit_msgs::PositionConstraint MoveItPlanner::getBoxConstraint(const std::strin
 }
 
 
-moveit_msgs::Constraints MoveItPlanner::getJointConstraint(const std::string& link_name,
-    const sensor_msgs::JointState& js, const float& joint_tolerance){
+moveit_msgs::Constraints MoveItPlanner::getJointConstraint(const sensor_msgs::JointState& js, const float& joint_tolerance){
 	moveit_msgs::Constraints c;
 	for (int i=0; i<js.name.size(); ++i){
 		moveit_msgs::JointConstraint jc;

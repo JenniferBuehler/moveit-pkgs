@@ -59,7 +59,7 @@ bool GraspedObjectHandlerMoveIt::detachObjectFromRobot(const std::string& object
     moveit_msgs::AttachedCollisionObject attObj;
     if (!hasObject(object_name, srv.response.scene.robot_state.attached_collision_objects, attObj))
     {
-        ROS_WARN("Object %s was not attached to robot, but it was tried to detach it.", object_name.c_str());
+        ROS_WARN("GraspedObjectHandlerMoveIt: Object %s was not attached to robot, but it was tried to detach it.", object_name.c_str());
         return true;
     }
     else
@@ -94,11 +94,11 @@ bool GraspedObjectHandlerMoveIt::attachObjectToRobot(const std::string& name,
         const std::string& link_name, const std::vector<std::string>& allowedTouchLinks)
 {
 
-    ROS_INFO("GraspedObjectHandler: Attaching %s to %s", name.c_str(), link_name.c_str());
+    ROS_INFO("GraspedObjectHandlerMoveIt: Attaching %s to %s", name.c_str(), link_name.c_str());
 
     if (moveit_planning_scene_publisher.getNumSubscribers() < 1)
     {
-        ROS_ERROR("attachObjectToRobot: No node subscribed to planning scene publisher.");
+        ROS_ERROR("GraspedObjectHandlerMoveIt: attachObjectToRobot: No node subscribed to planning scene publisher.");
         return false;
     }
 
@@ -110,7 +110,7 @@ bool GraspedObjectHandlerMoveIt::attachObjectToRobot(const std::string& name,
 
     if (!moveit_planning_scene_client.call(srv))
     {
-        ROS_ERROR("Can't obtain planning scene in order to attach object.");
+        ROS_ERROR("GraspedObjectHandlerMoveIt: Can't obtain planning scene in order to attach object.");
         return false;
     }
 
@@ -122,7 +122,7 @@ bool GraspedObjectHandlerMoveIt::attachObjectToRobot(const std::string& name,
     moveit_msgs::CollisionObject collObj;
     if (!hasObject(name, srv.response.scene.world.collision_objects, collObj))
     {
-        ROS_ERROR("Object %s was not in the scene, but it was tried to attach it to robot.", name.c_str());
+        ROS_ERROR("GraspedObjectHandlerMoveIt: Object %s was not in the scene, but it was tried to attach it to robot.", name.c_str());
         return false;
     }
     else
@@ -135,7 +135,7 @@ bool GraspedObjectHandlerMoveIt::attachObjectToRobot(const std::string& name,
     //transform the object into the link coordinate frame
     if (!transformCollisionObject(link_name, collObj))
     {
-        ROS_ERROR("GraspedObjectHandler: Could nto transform object to link frame");
+        ROS_ERROR("GraspedObjectHandlerMoveIt: Could not transform object to link frame");
         return false;
     }
 
@@ -160,7 +160,7 @@ bool GraspedObjectHandlerMoveIt::attachObjectToRobot(const std::string& name,
 
         if (!moveit_planning_scene_client.call(srv))
         {
-            ROS_ERROR("Can't obtain planning scene");
+            ROS_ERROR("GraspedObjectHandlerMoveIt: Can't obtain planning scene");
             return false;
         }
 
@@ -168,10 +168,10 @@ bool GraspedObjectHandlerMoveIt::attachObjectToRobot(const std::string& name,
         moveit_msgs::AttachedCollisionObject o;
         if (hasObject(name, srv.response.scene.robot_state.attached_collision_objects, o))
         {
-            //ROS_INFO("Scene is updated with attached object.");
+            ROS_INFO("GraspedObjectHandlerMoveIt: Scene is updated with attached object.");
             break;
         }
-        ROS_INFO("Waiting for scene update to attach object...");
+        ROS_INFO("GraspedObjectHandlerMoveIt: Waiting for scene update to attach object...");
         ros::Duration(0.5).sleep();
     }
 

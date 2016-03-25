@@ -55,10 +55,12 @@ public:
 		const float& z_tolerance); 
 
 	/**
-	 * Builds the joint constraint such that it corresponds to the passed joint_state
+	 * Builds the joint constraint such that it corresponds to the passed joint_state.
+     * It is recommended to pass only values between -PI and PI in the position of \e joint_state
+     * to ensure compatibility with MoveIt!.
 	 */
-	static moveit_msgs::Constraints getJointConstraint(const std::string& link_name,
-        const sensor_msgs::JointState& joint_state, const float& joint_tolerance);
+	static moveit_msgs::Constraints getJointConstraint(const sensor_msgs::JointState& joint_state,
+        const float& joint_tolerance);
 
 	/**
      * Builds a position constraint for \e link_name with a sphere around the \e target_pose 
@@ -174,7 +176,7 @@ private:
      */
     bool makeWorkspace(const geometry_msgs::PoseStamped& from,
                        const geometry_msgs::PoseStamped& to,
-                       float arm_reach_span, moveit_msgs::WorkspaceParameters& result);
+                       float arm_reach_span, moveit_msgs::WorkspaceParameters& result) const;
 
     /**
      * Creates a workspace as an axis-aligned box around \origin, where distance from origin
@@ -182,7 +184,7 @@ private:
      */
     bool makeWorkspace(const geometry_msgs::PoseStamped& origin,
                        float arm_reach_span, 
-                       moveit_msgs::WorkspaceParameters& wspace);
+                       moveit_msgs::WorkspaceParameters& wspace) const;
 
 
 
