@@ -99,6 +99,8 @@ private:
     //sets last executions status (last_exec) from this simple client goal state
     void setLastStateFrom(const actionlib::SimpleClientGoalState& state);
 
+    bool hasTrajectoryServer() const;
+
     std::string trajectory_action_topic;
     std::string path_action_topic;
 
@@ -106,16 +108,17 @@ private:
     PathNavigationActionClient * path_navigation_action_client;
     
     bool has_path_navigator;
+    bool has_trajectory_executor;
     
     bool has_current_request;
     bool has_current_trajectory;
 
     trajectory_msgs::JointTrajectory current_trajectory;
 
-    bool transform_path_running;        
-    bool trajectory_path_running;        
+    bool path_running;        
+    bool trajectory_running;        
     
-    //protects, has_current_request, has_current_trajectory and transform_path_running, trajectory_path_running 
+    //protects, has_current_request, has_current_trajectory and path_running, trajectory_running 
     boost::mutex lock;
     
     ExecutionStatus last_exec;

@@ -1,0 +1,26 @@
+# Template that can be used to load the moveit_multidof_controller.
+
+# Specify virtual joint name *if* the robot has one.
+# Leave unspecified or empty string otherwise.
+# virtual_joint_name: ""
+
+# Action topic to subscribe to which provides a
+# path_navigation_msgs/PathExecution.action for the robot.
+# Required if robot has a virtual joint.
+# If virtual_joint_name is empty, this field will be ignored.
+path_navigation_action_topic: /navigate_path
+
+# Action topic to subscribe to which provides a
+# control_msgs/FollowJointTrajectoryAction action for the robot
+joint_trajectory_action_topic: /follow_joint_trajectory
+
+# List of controllers. Specify as for moveit_simple_controller_manager.
+controller_list:
+  - name: <your-robot-name> 
+    action_ns: <not-currently-used> 
+    type: FollowRobotTrajectory
+    default: true
+    joints:
+      - joint1
+      - joint2
+      - ...

@@ -10,13 +10,16 @@ RobotTrajectoryExecutor::RobotTrajectoryExecutor(const std::string& _virtual_joi
         const std::string _trajectory_action_topic, const std::string _path_action_topic) : 
     trajectory_action_topic(_trajectory_action_topic),
     path_action_topic(_path_action_topic),
+    joint_trajectory_action_client(NULL),
+    path_navigation_action_client(NULL),
     has_path_navigator(false), 
     has_current_request(false),
     has_current_trajectory(false),
     last_exec(SUCCEEDED),
     virtual_joint_name(_virtual_joint_name),
-    transform_path_running(false),
-    trajectory_path_running(false) {
+    path_running(false),
+    trajectory_running(false)
+ {
 
     ROS_INFO_STREAM("Loading RobotTrajectoryExecutor");
 
@@ -39,9 +42,13 @@ RobotTrajectoryExecutor::RobotTrajectoryExecutor(const std::string& _virtual_joi
             <<"Virtual joint name: "<<virtual_joint_name<<", path action topic: "<<path_action_topic);
     }
 
-    joint_trajectory_action_client = new FollowJointTrajectoryActionClient(trajectory_action_topic, true);
+    if (!trajectory_action_topic.empty()) joint_trajectory_action_client = new FollowJointTrajectoryActionClient(trajectory_action_topic, true);
     if (has_path_navigator) path_navigation_action_client = new PathNavigationActionClient(path_action_topic, true);
 
+    if (trajectory_action_topic.empty() && path_action_topic.empty())
+    {
+        ROS_ERROR("RobotTrajectoryExecutor: Both trajectory and path action topics are empty, so RobotTrajectoryExecutor will not do anything");
+    }
     /*if (!connectClients()) {
         ROS_ERROR("Not all clients connected");
     }*/
@@ -59,12 +66,15 @@ RobotTrajectoryExecutor::RobotTrajectoryExecutor(const RobotTrajectoryExecutor& 
     last_exec(other.last_exec),
     virtual_joint_name(other.virtual_joint_name),
     current_trajectory(other.current_trajectory),
-    transform_path_running(other.transform_path_running),
-    trajectory_path_running(other.trajectory_path_running) {
+    path_running(other.path_running),
+    trajectory_running(other.trajectory_running) {
     
     ROS_WARN("Using copy constructor of RobotTrajectoryExecutor");
-    joint_trajectory_action_client = new FollowJointTrajectoryActionClient(trajectory_action_topic, true);
+    if (!trajectory_action_topic.empty()) joint_trajectory_action_client = new FollowJointTrajectoryActionClient(trajectory_action_topic, true);
+    else joint_trajectory_action_client=NULL;
+
     if (has_path_navigator) path_navigation_action_client = new PathNavigationActionClient(path_action_topic, true);
+    else path_navigation_action_client=NULL;
 
     /*if (!connectClients()) {
         ROS_ERROR("Not all clients connected");
@@ -73,14 +83,18 @@ RobotTrajectoryExecutor::RobotTrajectoryExecutor(const RobotTrajectoryExecutor& 
 
 
 RobotTrajectoryExecutor::~RobotTrajectoryExecutor(){
-    delete joint_trajectory_action_client;
-    if (has_path_navigator) delete path_navigation_action_client;
+    if (joint_trajectory_action_client) delete joint_trajectory_action_client;
+    if (path_navigation_action_client) delete path_navigation_action_client;
 }
 
 
+bool RobotTrajectoryExecutor::hasTrajectoryServer() const
+{
+    return !trajectory_action_topic.empty() && (joint_trajectory_action_client!=NULL);
+}
 
-bool RobotTrajectoryExecutor::sendTrajectory(const moveit_msgs::RobotTrajectory &t) {
-
+bool RobotTrajectoryExecutor::sendTrajectory(const moveit_msgs::RobotTrajectory &t)
+{
     ROS_INFO("RobotTrajectoryExecutor: Received RobotTrajectory.");
     //ROS_INFO_STREAM(t);
 
@@ -151,14 +165,20 @@ bool RobotTrajectoryExecutor::sendTrajectory(const moveit_msgs::RobotTrajectory 
 
     lock.lock();
     has_current_request=true;
-    has_current_trajectory=true; 
+    has_current_trajectory=!t.joint_trajectory.joint_names.empty();
     lock.unlock();
 
     last_exec = RUNNING;
 
     // send a goal to the action directly, as there is no path to be executed first
-    if (SEND_TRAJECTORIES_PARALLEL || !execPathFirst) {
-        if (!sendTrajectoryActionRequest(current_trajectory,-1)){
+    if (SEND_TRAJECTORIES_PARALLEL || !execPathFirst)
+    {
+        if (!t.joint_trajectory.joint_names.empty() && !hasTrajectoryServer())
+        {
+            ROS_WARN("RobotTrajectoryExecutor: joint trajectory was not empty, but no joint trajectory server is configured. Joint trajectory will not be executed.");
+        }
+        if (hasTrajectoryServer() && !sendTrajectoryActionRequest(current_trajectory,-1))
+        {
             ROS_ERROR("could not send navigation request");
             return false;
         }
@@ -179,10 +199,10 @@ bool RobotTrajectoryExecutor::cancelExecution() {
         ROS_INFO_STREAM("RobotTrajectoryExecutor: Cancelling execution");
         last_exec = PREEMPTED;
         if (has_current_trajectory) {
-            if (trajectory_path_running) joint_trajectory_action_client->cancelGoal();
+            if (trajectory_running) joint_trajectory_action_client->cancelGoal();
         }
         if (has_path_navigator) {
-            if (transform_path_running) path_navigation_action_client->cancelGoal();
+            if (path_running) path_navigation_action_client->cancelGoal();
         }
         has_current_request = false;
         has_current_trajectory = false;
@@ -200,8 +220,8 @@ bool RobotTrajectoryExecutor::waitForExecution(const ros::Duration & timeout)
     
     lock.lock();
     bool active_request=has_current_request;
-    bool active_path=transform_path_running;
-    bool active_trajectory=trajectory_path_running;
+    bool active_path=path_running;
+    bool active_trajectory=trajectory_running;
     lock.unlock();
 
     // wait for the current execution to finish
@@ -237,18 +257,24 @@ void RobotTrajectoryExecutor::pathDoneCB(const actionlib::SimpleClientGoalState&
     if (state!=actionlib::SimpleClientGoalState::SUCCEEDED) { //PENDING/ACTIVE/DONE
         ROS_WARN("Unsuccessful goal state detected, so not running the joint trajectory action request.");
         lock.lock();
-        transform_path_running=false;
+        path_running=false;
         lock.unlock();
         return;
     }    
 
     //ROS_INFO_STREAM("Answer: %i"<< result->finalpose);
     lock.lock();
-    bool active_trajectory=has_current_trajectory;
+    bool _has_current_trajectory=has_current_trajectory;
     lock.unlock();
 
-    if (!SEND_TRAJECTORIES_PARALLEL && active_trajectory) {
-        if (!sendTrajectoryActionRequest(current_trajectory,-1)){
+    if (!SEND_TRAJECTORIES_PARALLEL && _has_current_trajectory)
+    {
+        if (!current_trajectory.joint_names.empty() && !hasTrajectoryServer())
+        {
+            ROS_WARN("RobotTrajectoryExecutor: joint trajectory was not empty, but no joint trajectory server is configured. Joint trajectory will not be executed.");
+        }
+        if (hasTrajectoryServer() && !sendTrajectoryActionRequest(current_trajectory,-1))
+        {
             ROS_ERROR("could not send navigation request");
         }
     }
@@ -263,7 +289,7 @@ void RobotTrajectoryExecutor::trajectoryDoneCB(const actionlib::SimpleClientGoal
     lock.lock();
     has_current_trajectory=false;
     has_current_request=false;
-    trajectory_path_running=false;
+    trajectory_running=false;
     lock.unlock();
     setLastStateFrom(state);
 }
@@ -271,7 +297,7 @@ void RobotTrajectoryExecutor::trajectoryDoneCB(const actionlib::SimpleClientGoal
 
 
 bool RobotTrajectoryExecutor::sendTrajectoryActionRequest(const trajectory_msgs::JointTrajectory& trajectory, float waitForResult) {
-    if (!joint_trajectory_action_client->isServerConnected()) {
+    if (joint_trajectory_action_client && !joint_trajectory_action_client->isServerConnected()) {
         ROS_ERROR_STREAM("RobotTrajectoryExecutor: Joint trajectory action client not connected: " << trajectory_action_topic);
         return false;
     }
@@ -285,7 +311,6 @@ bool RobotTrajectoryExecutor::sendTrajectoryActionRequest(const trajectory_msgs:
         last_exec=SUCCEEDED;
         return true;
     }
-
     
     ROS_INFO("RobotTrajectoryExecutor Controller: Sending trajectory goal.");
 
@@ -294,7 +319,7 @@ bool RobotTrajectoryExecutor::sendTrajectoryActionRequest(const trajectory_msgs:
 
     joint_trajectory_action_client->sendGoal(tGoal, boost::bind(&RobotTrajectoryExecutor::trajectoryDoneCB, this, _1,_2));
     lock.lock();
-    trajectory_path_running=true;
+    trajectory_running=true;
     lock.unlock();
 
     if (waitForResult < 0) return true;
@@ -360,7 +385,7 @@ bool RobotTrajectoryExecutor::sendNavigationActionRequest(const nav_msgs::Path& 
 
     path_navigation_action_client->sendGoal(tGoal, boost::bind(&RobotTrajectoryExecutor::pathDoneCB, this, _1,_2));
     lock.lock();
-    transform_path_running=true;
+    path_running=true;
     lock.unlock();
 
     if (waitForResult < 0) return true;
@@ -386,25 +411,25 @@ RobotTrajectoryExecutor::ExecutionStatus RobotTrajectoryExecutor::getLastExecuti
 }
 
 bool RobotTrajectoryExecutor::clientsConnected() {
-    bool traj_connected=joint_trajectory_action_client->isServerConnected();    
-    bool path_connected=false;
+    bool traj_ok = !hasTrajectoryServer() || joint_trajectory_action_client->isServerConnected();    
+    bool path_connected = false;
     if (has_path_navigator) path_connected=path_navigation_action_client->isServerConnected();    
 
-    return traj_connected && (!has_path_navigator || path_connected);
+    return traj_ok && (!has_path_navigator || path_connected);
 }
 
 bool RobotTrajectoryExecutor::connectClients() {
     unsigned int attempts = 0;
 
-    bool traj_connected=joint_trajectory_action_client->isServerConnected();    
-    bool path_connected=false;
+    bool traj_ok = !hasTrajectoryServer() || joint_trajectory_action_client->isServerConnected();    
+    bool path_connected = false;
     if (has_path_navigator) path_connected=path_navigation_action_client->isServerConnected();    
 
-    while (ros::ok() && !traj_connected && (!has_path_navigator || !path_connected) && (++attempts < 3)){
+    while (ros::ok() && !traj_ok && (!has_path_navigator || !path_connected) && (++attempts < 3)){
 
-        if (!traj_connected) {            
+        if (!traj_ok) {            
             ROS_INFO_STREAM("RobotTrajectoryExecutor: Waiting for " << trajectory_action_topic << " to come up");
-            traj_connected=joint_trajectory_action_client->waitForServer(ros::Duration(2.0));
+            traj_ok=joint_trajectory_action_client->waitForServer(ros::Duration(2.0));
         }
 
         if (has_path_navigator && !path_connected) {
@@ -414,7 +439,8 @@ bool RobotTrajectoryExecutor::connectClients() {
     }
 
     bool ret=true;
-    if (!joint_trajectory_action_client->isServerConnected()) {
+    traj_ok = !hasTrajectoryServer() || joint_trajectory_action_client->isServerConnected();    
+    if (!traj_ok) {
         ROS_ERROR_STREAM("RobotTrajectoryExecutor: Joint trajectory action client not connected: " << trajectory_action_topic);
         ret=false;
     }

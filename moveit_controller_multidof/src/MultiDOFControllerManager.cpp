@@ -50,15 +50,15 @@ MultiDOFControllerManager::MultiDOFControllerManager() : node_handle_("~")
     }
     if (!node_handle_.hasParam("joint_trajectory_action_topic"))
     {
-        ROS_ERROR_STREAM_NAMED("manager","No joint_trajectory_action_topic parameter specified. Cannot use this controller.");
-        return;
+        ROS_WARN_STREAM_NAMED("manager","No joint_trajectory_action_topic parameter specified.");
     }
     node_handle_.getParam("joint_trajectory_action_topic",trajectory_action_topic);
     ROS_INFO("Got joint trajectory action topic name: <%s>", trajectory_action_topic.c_str());
-    if (trajectory_action_topic.empty()) {
+/*    if (trajectory_action_topic.empty()) {
         ROS_ERROR_STREAM_NAMED("manager","Empty joint_trajectory_action_topic specified. Cannot use this controller.");
         return;
     }
+*/
     // XXX END MULTIDOF_CHANGE
 
     if (!node_handle_.hasParam("controller_list"))
