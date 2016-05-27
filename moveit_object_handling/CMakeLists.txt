@@ -43,6 +43,8 @@ catkin_package(
 ## Build ##
 ###########
 
+add_definitions(${convenience_ros_functions_DEFINITIONS})
+
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
@@ -71,6 +73,7 @@ add_executable(moveit_collisionobject_generator
 add_dependencies(moveit_collisionobject_generator ${catkin_EXPORTED_TARGETS})
 add_dependencies(moveit_collision_matrix_manipulator ${catkin_EXPORTED_TARGETS})
 add_dependencies(moveit_grasped_object_handler ${catkin_EXPORTED_TARGETS})
+
 
 target_link_libraries(moveit_collisionobject_generator
     moveit_collision_matrix_manipulator

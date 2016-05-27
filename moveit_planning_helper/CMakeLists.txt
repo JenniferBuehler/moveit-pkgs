@@ -47,6 +47,8 @@ catkin_package(
 ## Build ##
 ###########
 
+add_definitions(${convenience_ros_functions_DEFINITIONS})
+
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
