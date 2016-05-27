@@ -40,7 +40,6 @@
   <build_depend>actionlib</build_depend>
   <build_depend>actionlib_msgs</build_depend>
   <build_depend>eigen_conversions</build_depend>
-  <build_depend>grasp_execution_msgs</build_depend>
   <build_depend>manipulation_msgs</build_depend>
   <build_depend>moveit_ros_planning_interface</build_depend>
   <build_depend>roscpp</build_depend>
@@ -51,7 +50,6 @@
   <run_depend>actionlib</run_depend>
   <run_depend>actionlib_msgs</run_depend>
   <run_depend>eigen_conversions</run_depend>
-  <run_depend>grasp_execution_msgs</run_depend>
   <run_depend>manipulation_msgs</run_depend>
   <run_depend>moveit_ros_planning_interface</run_depend>
   <run_depend>roscpp</run_depend>

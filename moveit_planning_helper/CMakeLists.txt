@@ -8,7 +8,6 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   actionlib_msgs
   eigen_conversions
-  grasp_execution_msgs
   manipulation_msgs
   moveit_ros_planning_interface
   roscpp
@@ -38,7 +37,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES moveit_planning_helper
-  CATKIN_DEPENDS actionlib actionlib_msgs eigen_conversions grasp_execution_msgs
+  CATKIN_DEPENDS actionlib actionlib_msgs eigen_conversions 
         manipulation_msgs moveit_ros_planning_interface roscpp tf trajectory_msgs
         convenience_ros_functions shape_tools
 #  DEPENDS system_lib
