@@ -62,26 +62,25 @@ bool GraspedObjectHandlerMoveIt::detachObjectFromRobot(const std::string& object
         ROS_WARN("GraspedObjectHandlerMoveIt: Object %s was not attached to robot, but it was tried to detach it.", object_name.c_str());
         return true;
     }
-    else
-    {
-        //remove object from planning scene
-        attObj.object.operation = attObj.object.REMOVE;
-        planning_scene.robot_state.attached_collision_objects.push_back(attObj);
 
-        // Add object to the planning scene again
-        // INFO: This was taken out, as the object recognition (along with MoveI! collision
-        // object generator) should take care of adding the object to the scene again.
-        // Transform the object into the link coordinate frame:
-        /*moveit_msgs::CollisionObject collision_object=attObj.object;
-        if (!transformCollisionObject(target_frame, collision_object)) {
-            ROS_ERROR("GraspedObjectHandler: Could nto transform object to world frame");
-            return false;
-        }
-        //send object as MoveIt collision object:
-        moveit_msgs::CollisionObject collObj=attObj.object;
-        collObj.operation = moveit_msgs::CollisionObject::ADD;
-        planning_scene.world.collision_objects.push_back(collObj);*/
+    //remove object from planning scene
+    attObj.object.operation = attObj.object.REMOVE;
+    planning_scene.robot_state.attached_collision_objects.push_back(attObj);
+    planning_scene.robot_state.is_diff = true;
+
+    // Add object to the planning scene again
+    // INFO: This was taken out, as the object recognition (along with MoveI! collision
+    // object generator) should take care of adding the object to the scene again.
+    // Transform the object into the link coordinate frame:
+    /*moveit_msgs::CollisionObject collision_object=attObj.object;
+    if (!transformCollisionObject(target_frame, collision_object)) {
+        ROS_ERROR("GraspedObjectHandler: Could nto transform object to world frame");
+        return false;
     }
+    //send object as MoveIt collision object:
+    moveit_msgs::CollisionObject collObj=attObj.object;
+    collObj.operation = moveit_msgs::CollisionObject::ADD;
+    planning_scene.world.collision_objects.push_back(collObj);*/
 
     moveit_planning_scene_publisher.publish(planning_scene);
 
@@ -147,6 +146,7 @@ bool GraspedObjectHandlerMoveIt::attachObjectToRobot(const std::string& name,
 
     attached_object.object.operation = attached_object.object.ADD;
     planning_scene.robot_state.attached_collision_objects.push_back(attached_object);
+    planning_scene.robot_state.is_diff = true;
 
     moveit_planning_scene_publisher.publish(planning_scene);
 
