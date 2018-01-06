@@ -2,8 +2,8 @@
 Changelog for package moveit_object_handling
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.1 (2018-01-06)
+------------------
 * Update to support detachment of objects from robots with new MoveIt version
 * Contributors: Jennifer Buehler
 

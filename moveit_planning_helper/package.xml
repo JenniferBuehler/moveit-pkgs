@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>moveit_planning_helper</name>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <description>A test package to plan and execute a joint trajectory.
     This package is only in here for testing during development.
     At some stage, this will move to a new package with all
