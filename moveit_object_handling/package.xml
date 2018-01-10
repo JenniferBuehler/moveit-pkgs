@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>moveit_object_handling</name>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <description>
     Package which helps generate the MoveIt! moveit_msgs/CollisionObject
     messages for existing objects in the scene, described by object_msgs/Object.

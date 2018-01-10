@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>moveit_controller_multidof</name>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <description>
     A moveit_controller_manager implementation which supports execution
     of a MultiDOF-trajectory with a virtual joint.
