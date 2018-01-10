@@ -50,7 +50,9 @@
   <run_depend>eigen_conversions</run_depend>
   <run_depend>convenience_ros_functions</run_depend>
   
-  <!-- needed for the tutorial, launch file moveit_object_handling/gazebo_object_recognition.launch -->
+  <!-- needed for the tutorial, launch file moveit_object_handling/gazebo_object_recognition.launch. Build depends only requred for Jenkins builds.  -->
+  <build_depend>gazebo_test_tools</build_depend>
+  <build_depend>gazebo_state_plugins</build_depend>
   <run_depend>gazebo_test_tools</run_depend>
   <run_depend>gazebo_state_plugins</run_depend>
 
