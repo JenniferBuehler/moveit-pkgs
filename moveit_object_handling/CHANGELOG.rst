@@ -2,8 +2,8 @@
 Changelog for package moveit_object_handling
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.3 (2018-02-06)
+------------------
 * Removed gazebo depends for jenkins build
 * Contributors: Jennifer Buehler
 
