@@ -2,6 +2,9 @@
 Changelog for package moveit_controller_multidof
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 1.0.1 (2018-01-06)
 ------------------
 

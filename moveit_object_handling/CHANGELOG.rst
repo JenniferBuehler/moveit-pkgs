@@ -2,6 +2,11 @@
 Changelog for package moveit_object_handling
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Removed gazebo depends for jenkins build
+* Contributors: Jennifer Buehler
+
 1.0.1 (2018-01-06)
 ------------------
 * Update to support detachment of objects from robots with new MoveIt version
