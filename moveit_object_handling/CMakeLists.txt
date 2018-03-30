@@ -10,9 +10,9 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_msgs
   roscpp
   shape_msgs
-  shape_tools
+  geometric_shapes
   std_msgs
-  object_msgs 
+  object_msgs
   eigen_conversions
   convenience_ros_functions
 )
@@ -28,7 +28,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES moveit_grasped_object_handler moveit_collision_matrix_manipulator 
+  LIBRARIES moveit_grasped_object_handler moveit_collision_matrix_manipulator
   CATKIN_DEPENDS geometry_msgs sensor_msgs moveit_msgs
       roscpp shape_msgs std_msgs eigen_conversions convenience_ros_functions
 )
@@ -89,7 +89,7 @@ target_link_libraries(moveit_grasped_object_handler
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 
 ## Mark executables and/or libraries for installation
-install(TARGETS moveit_grasped_object_handler moveit_collision_matrix_manipulator moveit_collisionobject_generator  
+install(TARGETS moveit_grasped_object_handler moveit_collision_matrix_manipulator moveit_collisionobject_generator
    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

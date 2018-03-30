@@ -31,7 +31,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
    INCLUDE_DIRS include
    LIBRARIES moveit_controller_multidof
-   CATKIN_DEPENDS actionlib actionlib_msgs control_msgs 
+   CATKIN_DEPENDS actionlib actionlib_msgs control_msgs
         geometry_msgs path_navigation_msgs
         moveit_core moveit_msgs pluginlib roscpp # moveit_ros_planning moveit_ros_planning_interface
 )
@@ -39,6 +39,8 @@ catkin_package(
 ###########
 ## Build ##
 ###########
+
+add_definitions(-std=c++11)
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
@@ -71,7 +73,7 @@ target_link_libraries(moveit_controller_multidof
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 
 ## Mark executables and/or libraries for installation
-install(TARGETS moveit_controller_multidof 
+install(TARGETS moveit_controller_multidof
    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

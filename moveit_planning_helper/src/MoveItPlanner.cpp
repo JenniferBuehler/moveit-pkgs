@@ -1,6 +1,6 @@
 #include <moveit_planning_helper/MoveItPlanner.h>
 #include <convenience_ros_functions/RobotInfo.h>
-#include <shape_tools/solid_primitive_dims.h>
+#include <geometric_shapes/solid_primitive_dims.h>
 
 #define ALLOWED_PLANNING_TIME 3
 #define ALLOWED_PLANNING_TIME_PATH_CONSTRAINTS 60
@@ -280,7 +280,7 @@ bool MoveItPlanner::isValidState(const moveit_msgs::RobotState& robotState, cons
 shape_msgs::SolidPrimitive getCone(const double& height, const double& radius){
 	shape_msgs::SolidPrimitive bv;
 	bv.type = shape_msgs::SolidPrimitive::CONE;
-	bv.dimensions.resize(shape_tools::SolidPrimitiveDimCount<shape_msgs::SolidPrimitive::CONE>::value);
+	bv.dimensions.resize(geometric_shapes::SolidPrimitiveDimCount<shape_msgs::SolidPrimitive::CONE>::value);
 	bv.dimensions[shape_msgs::SolidPrimitive::CONE_HEIGHT] = height;
 	bv.dimensions[shape_msgs::SolidPrimitive::CONE_RADIUS] = radius;
 	return bv;
@@ -293,7 +293,7 @@ shape_msgs::SolidPrimitive getCone(const double& height, const double& radius){
 shape_msgs::SolidPrimitive getCylinder(const double& height, const double& radius){
 	shape_msgs::SolidPrimitive bv;
 	bv.type = shape_msgs::SolidPrimitive::CYLINDER;
-	bv.dimensions.resize(shape_tools::SolidPrimitiveDimCount<shape_msgs::SolidPrimitive::CYLINDER>::value);
+	bv.dimensions.resize(geometric_shapes::SolidPrimitiveDimCount<shape_msgs::SolidPrimitive::CYLINDER>::value);
 	bv.dimensions[shape_msgs::SolidPrimitive::CYLINDER_HEIGHT] = height;
 	bv.dimensions[shape_msgs::SolidPrimitive::CYLINDER_RADIUS] = radius;
 	return bv;
@@ -304,7 +304,7 @@ shape_msgs::SolidPrimitive getCylinder(const double& height, const double& radiu
 shape_msgs::SolidPrimitive getBox(const double& x,const  double& y,const  double& z){
 	shape_msgs::SolidPrimitive bv;
 	bv.type = shape_msgs::SolidPrimitive::BOX;
-	bv.dimensions.resize(shape_tools::SolidPrimitiveDimCount<shape_msgs::SolidPrimitive::BOX>::value);
+	bv.dimensions.resize(geometric_shapes::SolidPrimitiveDimCount<shape_msgs::SolidPrimitive::BOX>::value);
 	bv.dimensions[shape_msgs::SolidPrimitive::BOX_X] = x;
 	bv.dimensions[shape_msgs::SolidPrimitive::BOX_Y] = y;
 	bv.dimensions[shape_msgs::SolidPrimitive::BOX_Z] = z;
@@ -314,7 +314,7 @@ shape_msgs::SolidPrimitive getBox(const double& x,const  double& y,const  double
 shape_msgs::SolidPrimitive getSphere(const double& radius){
 	shape_msgs::SolidPrimitive bv;
 	bv.type = shape_msgs::SolidPrimitive::SPHERE;
-	bv.dimensions.resize(shape_tools::SolidPrimitiveDimCount<shape_msgs::SolidPrimitive::SPHERE>::value);
+	bv.dimensions.resize(geometric_shapes::SolidPrimitiveDimCount<shape_msgs::SolidPrimitive::SPHERE>::value);
 	bv.dimensions[shape_msgs::SolidPrimitive::SPHERE_RADIUS] = radius;
 	return bv;
 }

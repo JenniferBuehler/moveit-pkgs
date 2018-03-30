@@ -8,13 +8,13 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   actionlib_msgs
   eigen_conversions
-  manipulation_msgs
   moveit_ros_planning_interface
   roscpp
   tf
   trajectory_msgs
   convenience_ros_functions
-  shape_tools
+  geometric_shapes
+  shape_msgs
 )
 
 ###################################
@@ -29,16 +29,16 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES moveit_planning_helper
-  CATKIN_DEPENDS actionlib actionlib_msgs eigen_conversions 
-        manipulation_msgs moveit_ros_planning_interface roscpp tf trajectory_msgs
-        convenience_ros_functions shape_tools
+  CATKIN_DEPENDS actionlib actionlib_msgs eigen_conversions
+        moveit_ros_planning_interface roscpp tf trajectory_msgs
+        convenience_ros_functions geometric_shapes shape_msgs
 )
 
 ###########
 ## Build ##
 ###########
 
-add_definitions(${convenience_ros_functions_DEFINITIONS})
+add_definitions(${convenience_ros_functions_DEFINITIONS} -std=c++11)
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
