@@ -250,7 +250,8 @@ void GraspedObjectHandlerMoveIt::waitForSubscribers()
 {
     while (moveit_planning_scene_publisher.getNumSubscribers() == 0)
     {
-        ROS_INFO("Waiting for subscribers...");
+        ROS_INFO_STREAM("GraspedObjectHandler: waiting for subscribers to "
+                        << moveit_planning_scene_publisher.getTopic() << "...");
         ros::Duration(0.5).sleep();
     }
 }
